@@ -54,7 +54,7 @@ def macro_Add(macro):
 #mvi 1,0001
 #mv 5,6
 macro_Names=macro_Names+["AND"]
-def macro_Add_Pl(macro):
+def macro_And_Pl(macro):
     location_Split=macro.split(",")
     if len(location_Split)<3 or len(location_Split)>3:
         return ["invalid"]

@@ -1,5 +1,5 @@
 import sys
-from macros import macro_Names, macro_Format
+from macros import macro_Names, macro_Format, macro_Pl
 
 def normal_Parse(ins_String):
     match ins_String[0].upper():
@@ -49,14 +49,27 @@ def imm_Parse(ins_String):
 def label_Parse(label_String):
     return label_String[0]
 
-def ins_Macros(asm):
+def ins_Macros_Pl(asm):
     mcode_Lines=asm
     i=0
     while i < len(asm):
         opcode_Split=asm[i].split()
         if opcode_Split[0].upper() in macro_Names:
-            macro_Expand=macro_Format(asm[i])
-            mcode_Lines[i:i + 1] = macro_Expand
+            macro_Expand=macro_Pl(asm[i])
+            mcode_Lines[i:i+1]=macro_Expand
+        i+=1
+    print(mcode_Lines)
+
+    return mcode_Lines
+
+def ins_Macros(asm, labels):
+    mcode_Lines=asm
+    i=0
+    while i < len(asm):
+        opcode_Split=asm[i].split()
+        if opcode_Split[0].upper() in macro_Names:
+            macro_Expand=macro_Format(asm[i], labels)
+            mcode_Lines[i:i+1]=macro_Expand
         i+=1
     print(mcode_Lines)
 
@@ -80,6 +93,9 @@ def ins_Sort(asm):
                 return ins_List
             case "MVI":
                 print("immediate instruction")
+                return ins_List
+            case c if c.startswith('MCR'):
+                print("macro instruction")
                 return ins_List
             case c if c.startswith(':'):
                 print("label")
@@ -245,8 +261,8 @@ asm_Lines_Strip=[ins.strip() for ins in asm_Lines]
 print("STRIPPED FILE")
 print(asm_Lines_Strip)
 
-print("REPLACE MACROS")
-asm_Expanded=ins_Macros(asm_Lines_Strip)
+print("REPLACE MACROS WITH PLACEHOLDERS")
+asm_Expanded=ins_Macros_Pl(asm_Lines_Strip)
 
 print("INSTRUCTION VERIFYING")
 mcode_Lines=ins_Sort(asm_Expanded)
@@ -257,6 +273,16 @@ invalid_Check(mcode_Lines)
 print("LABEL ADDRESSING")
 labels=label_Addressing(mcode_Lines)
 print(labels)
+
+print("REPLACE MACROS WITH ACTUAL")
+asm_Lines_Strip=[ins.strip() for ins in asm_Lines]
+mcode_Macros=ins_Macros(asm_Lines_Strip, labels)
+
+print("INSTRUCTION VERIFYING")
+mcode_Lines=ins_Sort(mcode_Macros)
+
+print("INVALID INSTRUCTION CHECK")
+invalid_Check(mcode_Lines)
 
 print("INSTRUCTION DECODING")
 mcode_Decoded=ins_Decode(mcode_Lines)

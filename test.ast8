@@ -1,0 +1,9 @@
+#test
+    MV  2,0
+    MVC 7,2
+    MVZ 6,3
+    MVI 1,12
+:LBL
+    MVI 2,10
+:LBL2
+    MVI 2,0xb

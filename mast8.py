@@ -55,6 +55,10 @@ def ins_Macros_Pl(asm):
         opcode_Split=asm[i].split()
         if opcode_Split[0].upper() in macro_Names:
             macro_Expand=macro_Pl(asm[i])
+            if macro_Expand==["invalid"]:
+                print("Invalid macro instruction at line "+str((i+1)))
+                print("Exiting")
+                sys.exit(0)
             mcode_Lines[i:i+1]=macro_Expand
         i+=1
     if verbose: print(mcode_Lines)
@@ -93,7 +97,7 @@ def ins_Sort(asm):
             case "MVI":
                 if verbose: print("immediate instruction")
                 return ins_List
-            case c if c.startswith('MCR'):
+            case c if c in macro_Names:
                 if verbose: print("macro instruction")
                 return ins_List
             case c if c.startswith(':'):
@@ -262,14 +266,14 @@ asm_Lines_Strip=[ins.strip() for ins in asm_Lines]
 print("STRIPPED FILE")
 if verbose: print(asm_Lines_Strip)
 
-print("REPLACE MACROS WITH PLACEHOLDERS")
-asm_Expanded=ins_Macros_Pl(asm_Lines_Strip)
-
 print("INSTRUCTION VERIFYING")
-mcode_Lines=ins_Sort(asm_Expanded)
+mcode_Lines=ins_Sort(asm_Lines_Strip)
 
 print("INVALID INSTRUCTION CHECK")
 invalid_Check(mcode_Lines)
+
+print("REPLACE MACROS WITH PLACEHOLDERS")
+asm_Expanded=ins_Macros_Pl(mcode_Lines)
 
 print("LABEL ADDRESSING")
 labels=label_Addressing(mcode_Lines)
@@ -279,14 +283,8 @@ print("REPLACE MACROS WITH ACTUAL")
 asm_Lines_Strip=[ins.strip() for ins in asm_Lines]
 mcode_Macros=ins_Macros(asm_Lines_Strip, labels)
 
-print("INSTRUCTION VERIFYING")
-mcode_Lines=ins_Sort(mcode_Macros)
-
-print("INVALID INSTRUCTION CHECK")
-invalid_Check(mcode_Lines)
-
 print("INSTRUCTION DECODING")
-mcode_Decoded=ins_Decode(mcode_Lines)
+mcode_Decoded=ins_Decode(mcode_Macros)
 
 print("INSTRUCTION ADDRESSING")
 ins_Addressed=ins_Addressing(mcode_Decoded)

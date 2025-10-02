@@ -237,7 +237,7 @@ def logisim_Formatting(asm, output_Name):
     print("Output to: "+output_Name)
     return
 
-input_File="input"
+input_File=""
 output_File="output"
 output_Format=""
 verbose=False
@@ -255,6 +255,11 @@ while i<len(sys.argv):
         case _:
             print("Unknown Input "+sys.argv[i])
     i+=1
+
+if input_File=="":
+    print("No Input File")
+    print("Exiting")
+    sys.exit(0)
 
 asm_File=open(input_File, "r")
 asm_Lines=asm_File.readlines()

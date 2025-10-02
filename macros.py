@@ -14,7 +14,16 @@ macro_Names=[]
 #mv 0,1
 macro_Names=macro_Names+["JMP"]
 def macro_Jmp_Pl(macro):
-    return ["MCR;JMP;0", "MCR;JMP;1", "MCR;JMP;2", "MCR;JMP;3", "MCR;JMP;4", "MCR;JMP;5", "MCR;JMP;6", "MCR;JMP;7", "MCR;JMP;8", "MCR;JMP;9"]
+    length=10
+    placeholder_List=[]
+    i=1
+    while i <= length:
+        placeholder=f"MCR;{macro};{i-1}"
+        placeholder_List=placeholder_List+[placeholder]
+        i+=1
+
+    return placeholder_List
+
 def macro_Jmp(macro, labels):
     label_Names=labels[0]
     label_Addresses=labels[1]
@@ -30,6 +39,7 @@ def macro_Jmp(macro, labels):
     mv_1=f"MVI 1,0b{address_Binary[8:12]}"
     mv_2=f"MVI 2,0b{address_Binary[4:8]}"
     mv_3=f"MVI 3,0b{address_Binary[0:4]}"
+
     return ["MV 3,6"]+["MV 4,7"]+[mv_0]+[mv_1]+[mv_2]+[mv_3]+["MV 1,6"]+["MV 6,3"]+["MV 7,4"]+["MV 0,1"]
 
 #ADD x,a,b
@@ -44,10 +54,16 @@ def macro_Jmp(macro, labels):
 #mv x,5
 macro_Names=macro_Names+["ADD"]
 def macro_Add_Pl(macro):
-    location_Split=macro.split(",")
-    if len(location_Split)<3 or len(location_Split)>3:
-        return ["invalid"]
-    return ["MCR;ADD;0", "MCR;ADD;1", "MCR;ADD;2", "MCR;ADD;3", "MCR;ADD;4", "MCR;ADD;5", "MCR;ADD;6", "MCR;ADD;7"]
+    length=8
+    placeholder_List=[]
+    i=1
+    while i <= length:
+        placeholder=f"MCR;{macro};{i-1}"
+        placeholder_List=placeholder_List+[placeholder]
+        i+=1
+
+    return placeholder_List
+
 def macro_Add(macro):
     location_Split=macro.split(",")
 
@@ -56,6 +72,7 @@ def macro_Add(macro):
     mv_B=f"MV 4,{location_Split[2]}"
     restore_A=f"MV {location_Split[1]},3"
     restore_B=f"MV {location_Split[2]},4"
+
     return [mv_A]+[mv_B]+["MVI 0,0b0001", "MVI 1,0b0100", "MV 5,6"]+[restore_A]+[restore_B]+[mv_X]
 
 #AND x,a,b
@@ -70,10 +87,16 @@ def macro_Add(macro):
 #mv x,5
 macro_Names=macro_Names+["AND"]
 def macro_And_Pl(macro):
-    location_Split=macro.split(",")
-    if len(location_Split)<3 or len(location_Split)>3:
-        return ["invalid"]
-    return ["MCR;AND;0", "MCR;AND;1", "MCR;AND;2", "MCR;AND;3", "MCR;AND;4", "MCR;AND;5", "MCR;ADD;6", "MCR;ADD;7"]
+    length=8
+    placeholder_List=[]
+    i=1
+    while i <= length:
+        placeholder=f"MCR;{macro};{i-1}"
+        placeholder_List=placeholder_List+[placeholder]
+        i+=1
+
+    return placeholder_List
+
 def macro_And(macro):
     location_Split=macro.split(",")
 
@@ -82,17 +105,18 @@ def macro_And(macro):
     mv_B=f"MV 4,{location_Split[2]}"
     restore_A=f"MV {location_Split[1]},3"
     restore_B=f"MV {location_Split[2]},4"
+
     return [mv_A]+[mv_B]+["MVI 0,0b1011", "MVI 1,0b0101", "MV 5,6"]+[restore_A]+[restore_B]+[mv_X]
 
 def macro_Pl(macro):
     opcode_Split=macro.split()
     match opcode_Split[0].upper():
         case "JMP":
-            return macro_Jmp_Pl(opcode_Split[1])
+            return macro_Jmp_Pl(opcode_Split[0])
         case "ADD":
-            return macro_Add_Pl(opcode_Split[1])
+            return macro_Add_Pl(opcode_Split[0])
         case "AND":
-            return macro_And_Pl(opcode_Split[1])
+            return macro_And_Pl(opcode_Split[0])
 
 def macro_Format(macro, labels):
     opcode_Split=macro.split()

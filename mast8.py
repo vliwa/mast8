@@ -71,10 +71,6 @@ def ins_Macros_Pl(asm):
         opcode_Split=asm[i].split()
         if opcode_Split[0].upper() in macro_Names:
             macro_Expand=macro_Pl(asm[i])
-            if macro_Expand==["invalid"]:
-                print("Invalid macro instruction at line "+str((i+1)))
-                print("Exiting")
-                sys.exit(0)
             mcode_Lines[i:i+1]=macro_Expand
         i+=1
     if verbose: print(mcode_Lines)
@@ -118,9 +114,13 @@ def ins_Sort(asm):
             case c if c.startswith(':'):
                 if verbose: print("label")
                 return ins_List
+            case c if c.startswith('#'):
+                if verbose: print("comment")
+                return ins_List
             case _:
                 if verbose: print("invalid instruction "+opcode_Split[0])
-                return "invalid"
+                invalid=f"invalid:{ins_List}"
+                return invalid
 
     mcode_Lines=[]
     i=0
@@ -201,8 +201,9 @@ def label_Addressing(mcode_Lines):
 def invalid_Check(mcode_Lines):
     i=0
     while i < len(mcode_Lines):
-        if mcode_Lines[i]=="invalid":
-            print("Invalid instruction at line "+str((i+1)))
+        if mcode_Lines[i].startswith("invalid"):
+            invalid_Ins=mcode_Lines[i].split(':')
+            print("Invalid instruction '"+invalid_Ins[1]+"' at line "+str((i+1)))
             print("Exiting")
             sys.exit(0)
         i+=1
@@ -271,26 +272,26 @@ print("STRIP WHITESPACE")
 asm_Lines_Strip=[ins.strip() for ins in asm_Lines]
 if verbose: print(asm_Lines_Strip)
 
-print("STRIP COMMENTS")
-mcode_Ins=strip_Comments(asm_Lines_Strip)
-if verbose: print(mcode_Ins)
-
 print("INSTRUCTION VERIFYING")
-mcode_Lines=ins_Sort(mcode_Ins)
-mcode_Lines_Pass2=mcode_Lines[:]
+mcode_Lines=ins_Sort(asm_Lines_Strip)
 
 print("INVALID INSTRUCTION CHECK")
 invalid_Check(mcode_Lines)
 
+print("STRIP COMMENTS")
+mcode_Ins=strip_Comments(mcode_Lines)
+mcode_Pass2=mcode_Ins[:]
+if verbose: print(mcode_Ins)
+
 print("REPLACE MACROS WITH PLACEHOLDERS")
-mcode_Expanded=ins_Macros_Pl(mcode_Lines)
+mcode_Expanded=ins_Macros_Pl(mcode_Ins)
 
 print("LABEL ADDRESSING")
 labels=label_Addressing(mcode_Expanded)
 if verbose: print(labels)
 
 print("REPLACE MACROS WITH ACTUAL")
-mcode_Macros=ins_Macros(mcode_Lines_Pass2, labels)
+mcode_Macros=ins_Macros(mcode_Pass2, labels)
 
 print("INSTRUCTION DECODING")
 mcode_Decoded=ins_Decode(mcode_Macros)

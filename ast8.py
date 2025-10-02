@@ -1,8 +1,8 @@
 import sys
-from macros import macro_Names, macro_Expands
+from macros import macro_Names, macro_Format
 
 def normal_Parse(ins_String):
-    match ins_String[0]:
+    match ins_String[0].upper():
         case "MV":
             opcode="00"
         case "MVC":
@@ -53,9 +53,9 @@ def ins_Macros(asm):
     mcode_Lines=asm
     i=0
     while i < len(asm):
-        if asm[i] in macro_Names:
-            macro_Index=macro_Names.index(asm[i])
-            macro_Expand=macro_Expands[macro_Index]
+        opcode_Split=asm[i].split()
+        if opcode_Split[0].upper() in macro_Names:
+            macro_Expand=macro_Format(asm[i])
             mcode_Lines[i:i + 1] = macro_Expand
         i+=1
     print(mcode_Lines)
@@ -63,61 +63,130 @@ def ins_Macros(asm):
     return mcode_Lines
 
 def ins_Sort(asm):
-    print(asm)
-    opcode_Split=asm.split()
-    print(opcode_Split)
+    def sort(ins_List):
+        print(ins_List)
+        opcode_Split=ins_List.split()
+        print(opcode_Split)
 
-    match opcode_Split[0]:
-        case "MV":
-            print("normal instruction")
-            return asm
-        case "MVC":
-            print("normal instruction")
-            return asm
-        case "MVZ":
-            print("normal instruction")
-            return asm
-        case "MVI":
-            print("immediate instruction")
-            return asm
-        case c if c.startswith(':'):
-            print("label")
-            return asm
-        case c if c.startswith('#'):
-            print("comment")
-            return "comment"
-        case _:
-            print("invalid instruction "+opcode_Split[0])
-            return "invalid"
-    return
+        match opcode_Split[0].upper():
+            case "MV":
+                print("normal instruction")
+                return ins_List
+            case "MVC":
+                print("normal instruction")
+                return ins_List
+            case "MVZ":
+                print("normal instruction")
+                return ins_List
+            case "MVI":
+                print("immediate instruction")
+                return ins_List
+            case c if c.startswith(':'):
+                print("label")
+                return ins_List
+            case c if c.startswith('#'):
+                print("comment")
+                return "comment"
+            case _:
+                print("invalid instruction "+opcode_Split[0])
+                return "invalid"
+
+    mcode_Lines=[]
+    i=0
+    while i < len(asm):
+        mcode_Lines=mcode_Lines+[sort(asm[i])]
+        print(mcode_Lines[i])
+        i+=1
+    print(mcode_Lines)
+
+    return mcode_Lines
 
 def ins_Decode(asm):
-    print(asm)
-    opcode_Split=asm.split()
-    print(opcode_Split)
+    def decode(ins_List):
+        print(ins_List)
+        opcode_Split=ins_List.split()
+        print(opcode_Split)
 
-    match opcode_Split[0]:
-        case "MV":
-            print("normal instruction")
-            return normal_Parse(opcode_Split)
-        case "MVC":
-            print("normal instruction")
-            return normal_Parse(opcode_Split)
-        case "MVZ":
-            print("normal instruction")
-            return normal_Parse(opcode_Split)
-        case "MVI":
-            print("immediate instruction")
-            return imm_Parse(opcode_Split)
-        case c if c.startswith(':'):
-            print("label")
-            return label_Parse(opcode_Split)
-        case c if c.startswith('#'):
-            print("comment")
-            return "comment"
-        case _:
-            print("invalid instruction "+opcode_Split[0])
-            return "invalid"
+        match opcode_Split[0].upper():
+            case "MV":
+                print("normal instruction")
+                return normal_Parse(opcode_Split)
+            case "MVC":
+                print("normal instruction")
+                return normal_Parse(opcode_Split)
+            case "MVZ":
+                print("normal instruction")
+                return normal_Parse(opcode_Split)
+            case "MVI":
+                print("immediate instruction")
+                return imm_Parse(opcode_Split)
+            case c if c.startswith(':'):
+                print("label")
+                return label_Parse(opcode_Split)
+            case "COMMENT":
+                print("comment")
+                return "comment"
+            case _:
+                print("invalid instruction "+opcode_Split[0])
+                return "invalid"
+
+    mcode_Lines=[]
+    i=0
+    while i < len(asm):
+        mcode_Lines=mcode_Lines+[decode(asm[i])]
+        print(mcode_Lines[i])
+        i+=1
+    print(mcode_Lines)
+
+    return mcode_Lines
+
+def ins_Addressing(mcode_Lines):
+    ins_Addressed=[]
+    i=0
+    while i < len(mcode_Lines):
+        match mcode_Lines[i]:
+            case "comment":
+                print("comment ignored")
+            case c if c.startswith(':'):
+                print("label ignored")
+            case _:
+                ins_Addressed=ins_Addressed+[mcode_Lines[i]]
+                print("instruction addressed "+mcode_Lines[i])
+        i+=1
+    print(ins_Addressed)
+
+    return ins_Addressed
+
+def label_Addressing(mcode_Lines):
+    label_Names=[]
+    label_Addresses=[]
+    i=0
+    addr=0
+    while i < len(mcode_Lines):
+        match mcode_Lines[i]:
+            case "comment":
+                print("comment ignored")
+            case c if c.startswith(':'):
+                label=mcode_Lines[i].strip(':')
+                label_Names=label_Names+[label]
+                label_Addresses=label_Addresses+[str(addr)]
+                print("label addressed")
+            case _:
+                addr+=1
+        i+=1
+    print(label_Names)
+    print(label_Addresses)
+
+    return label_Names, label_Addresses
+
+def invalid_Check(mcode_Lines):
+    i=0
+    while i < len(mcode_Lines):
+        if mcode_Lines[i]=="invalid":
+            print("Invalid instruction at line "+str((i+1)))
+            print("Exiting")
+            sys.exit(0)
+        i+=1
     return
 
 def logisim_Formatting(asm, output_Name):
@@ -177,69 +246,23 @@ print("STRIPPED FILE")
 print(asm_Lines_Strip)
 
 print("REPLACE MACROS")
-asm_Lines_Strip=ins_Macros(asm_Lines_Strip)
+asm_Expanded=ins_Macros(asm_Lines_Strip)
 
 print("INSTRUCTION VERIFYING")
-mcode_Lines=[]
-i=0
-while i < len(asm_Lines_Strip):
-    mcode_Lines=mcode_Lines+[ins_Sort(asm_Lines_Strip[i])]
-    print(mcode_Lines[i])
-    i+=1
-print(mcode_Lines)
+mcode_Lines=ins_Sort(asm_Expanded)
 
 print("INVALID INSTRUCTION CHECK")
-i=0
-while i < len(mcode_Lines):
-    if mcode_Lines[i]=="invalid":
-        print("Invalid instruction at line "+str((i+1)))
-        print("Exiting")
-        sys.exit(0)
-    i+=1
+invalid_Check(mcode_Lines)
 
 print("LABEL ADDRESSING")
-label_Names=[]
-label_Addresses=[]
-i=0
-addr=0
-while i < len(mcode_Lines):
-    match mcode_Lines[i]:
-        case "comment":
-            print("comment ignored")
-        case c if c.startswith(':'):
-            label=mcode_Lines[i].strip(':')
-            label_Names=label_Names+[label]
-            label_Addresses=label_Addresses+[str(addr)]
-            print("label addressed")
-        case _:
-            addr+=1
-    i+=1
-print(label_Names)
-print(label_Addresses)
+labels=label_Addressing(mcode_Lines)
+print(labels)
 
 print("INSTRUCTION DECODING")
-mcode_Lines=[]
-i=0
-while i < len(asm_Lines_Strip):
-    mcode_Lines=mcode_Lines+[ins_Decode(asm_Lines_Strip[i])]
-    print(mcode_Lines[i])
-    i+=1
-print(mcode_Lines)
+mcode_Decoded=ins_Decode(mcode_Lines)
 
 print("INSTRUCTION ADDRESSING")
-ins_Addressed=[]
-i=0
-while i < len(mcode_Lines):
-    match mcode_Lines[i]:
-        case "comment":
-            print("comment ignored")
-        case c if c.startswith(':'):
-            print("label ignored")
-        case _:
-            ins_Addressed=ins_Addressed+[mcode_Lines[i]]
-            print("instruction addressed "+mcode_Lines[i])
-    i+=1
-print(ins_Addressed)
+ins_Addressed=ins_Addressing(mcode_Decoded)
 
 match output_Format:
     case "l":

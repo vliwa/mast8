@@ -2,7 +2,9 @@
     MV  2,0
     MVC 7,2
     MVZ 6,3
+    ADD
     MVI 1,12
+    AND
 :LBL
     MVI 2,10
 :LBL2

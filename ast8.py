@@ -1,4 +1,5 @@
 import sys
+from macros import macro_Names, macro_Expands
 
 def normal_Parse(ins_String):
     match ins_String[0]:
@@ -32,10 +33,11 @@ def imm_Parse(ins_String):
 
     match nibble_Split[1]:
         case c if c.startswith('0b'):
-            data_decimal=int(nibble_Split[1].lstrip('0b'), 2)
+            data_decimal=int(nibble_Split[1][2:], 2)
+            print(data_decimal)
             data=format(data_decimal, '04b')
         case c if c.startswith('0x'):
-            data_decimal=int(nibble_Split[1].lstrip('0x'), 16)
+            data_decimal=int(nibble_Split[1][2:], 16)
             data=format(data_decimal, '04b')
         case _:
             data=format(int(nibble_Split[1]), '04b')
@@ -46,6 +48,19 @@ def imm_Parse(ins_String):
 
 def label_Parse(label_String):
     return label_String[0]
+
+def ins_Macros(asm):
+    mcode_Lines=asm
+    i=0
+    while i < len(asm):
+        if asm[i] in macro_Names:
+            macro_Index=macro_Names.index(asm[i])
+            macro_Expand=macro_Expands[macro_Index]
+            mcode_Lines[i:i + 1] = macro_Expand
+        i+=1
+    print(mcode_Lines)
+
+    return mcode_Lines
 
 def ins_Sort(asm):
     print(asm)
@@ -160,6 +175,9 @@ print(asm_Lines)
 asm_Lines_Strip=[ins.strip() for ins in asm_Lines]
 print("STRIPPED FILE")
 print(asm_Lines_Strip)
+
+print("REPLACE MACROS")
+asm_Lines_Strip=ins_Macros(asm_Lines_Strip)
 
 print("INSTRUCTION VERIFYING")
 mcode_Lines=[]

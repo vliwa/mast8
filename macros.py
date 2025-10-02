@@ -14,10 +14,13 @@ def macro_Jmp(macro, labels):
     label_Names=labels[0]
     label_Addresses=labels[1]
 
+    if macro not in label_Names:
+        print("Unknown Label "+macro)
+        print("Exiting")
+        sys.exit(0)
+
     address=label_Names.index(macro)
     address_Binary=format(int(label_Addresses[address]), '016b')
-    print("ADDRESS")
-    print(address_Binary)
     mv_0=f"MVI 0,0b{address_Binary[12:16]}"
     mv_1=f"MVI 1,0b{address_Binary[8:12]}"
     mv_2=f"MVI 2,0b{address_Binary[4:8]}"

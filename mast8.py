@@ -34,7 +34,6 @@ def imm_Parse(ins_String):
     match nibble_Split[1]:
         case c if c.startswith('0b'):
             data_decimal=int(nibble_Split[1][2:], 2)
-            print(data_decimal)
             data=format(data_decimal, '04b')
         case c if c.startswith('0x'):
             data_decimal=int(nibble_Split[1][2:], 16)
@@ -58,7 +57,8 @@ def ins_Macros_Pl(asm):
             macro_Expand=macro_Pl(asm[i])
             mcode_Lines[i:i+1]=macro_Expand
         i+=1
-    print(mcode_Lines)
+    if verbose:
+        print(mcode_Lines)
 
     return mcode_Lines
 
@@ -71,88 +71,112 @@ def ins_Macros(asm, labels):
             macro_Expand=macro_Format(asm[i], labels)
             mcode_Lines[i:i+1]=macro_Expand
         i+=1
-    print(mcode_Lines)
+    if verbose:
+        print(mcode_Lines)
 
     return mcode_Lines
 
 def ins_Sort(asm):
     def sort(ins_List):
-        print(ins_List)
+        if verbose:
+            print(ins_List)
         opcode_Split=ins_List.split()
-        print(opcode_Split)
+        if verbose:
+            print(opcode_Split)
 
         match opcode_Split[0].upper():
             case "MV":
-                print("normal instruction")
+                if verbose:
+                    print("normal instruction")
                 return ins_List
             case "MVC":
-                print("normal instruction")
+                if verbose:
+                    print("normal instruction")
                 return ins_List
             case "MVZ":
-                print("normal instruction")
+                if verbose:
+                    print("normal instruction")
                 return ins_List
             case "MVI":
-                print("immediate instruction")
+                if verbose:
+                    print("immediate instruction")
                 return ins_List
             case c if c.startswith('MCR'):
-                print("macro instruction")
+                if verbose:
+                    print("macro instruction")
                 return ins_List
             case c if c.startswith(':'):
-                print("label")
+                if verbose:
+                    print("label")
                 return ins_List
             case c if c.startswith('#'):
-                print("comment")
+                if verbose:
+                    print("comment")
                 return "comment"
             case _:
-                print("invalid instruction "+opcode_Split[0])
+                if verbose:
+                    print("invalid instruction "+opcode_Split[0])
                 return "invalid"
 
     mcode_Lines=[]
     i=0
     while i < len(asm):
         mcode_Lines=mcode_Lines+[sort(asm[i])]
-        print(mcode_Lines[i])
+        if verbose:
+            print(mcode_Lines[i])
         i+=1
-    print(mcode_Lines)
+    if verbose:
+        print(mcode_Lines)
 
     return mcode_Lines
 
 def ins_Decode(asm):
     def decode(ins_List):
-        print(ins_List)
+        if verbose:
+            print(ins_List)
         opcode_Split=ins_List.split()
-        print(opcode_Split)
+        if verbose:
+            print(opcode_Split)
 
         match opcode_Split[0].upper():
             case "MV":
-                print("normal instruction")
+                if verbose:
+                    print("normal instruction")
                 return normal_Parse(opcode_Split)
             case "MVC":
-                print("normal instruction")
+                if verbose:
+                    print("normal instruction")
                 return normal_Parse(opcode_Split)
             case "MVZ":
-                print("normal instruction")
+                if verbose:
+                    print("normal instruction")
                 return normal_Parse(opcode_Split)
             case "MVI":
-                print("immediate instruction")
+                if verbose:
+                    print("immediate instruction")
                 return imm_Parse(opcode_Split)
             case c if c.startswith(':'):
-                print("label")
+                if verbose:
+                    print("label")
                 return label_Parse(opcode_Split)
             case "COMMENT":
-                print("comment")
+                if verbose:
+                    print("comment")
                 return "comment"
             case _:
-                print("invalid instruction "+opcode_Split[0])
+                if verbose:
+                    print("invalid instruction "+opcode_Split[0])
                 return "invalid"
 
     mcode_Lines=[]
     i=0
     while i < len(asm):
         mcode_Lines=mcode_Lines+[decode(asm[i])]
-        print(mcode_Lines[i])
+        if verbose:
+            print(mcode_Lines[i])
         i+=1
-    print(mcode_Lines)
+    if verbose:
+        print(mcode_Lines)
 
     return mcode_Lines
 
@@ -162,14 +186,18 @@ def ins_Addressing(mcode_Lines):
     while i < len(mcode_Lines):
         match mcode_Lines[i]:
             case "comment":
-                print("comment ignored")
+                if verbose:
+                    print("comment ignored")
             case c if c.startswith(':'):
-                print("label ignored")
+                if verbose:
+                    print("label ignored")
             case _:
                 ins_Addressed=ins_Addressed+[mcode_Lines[i]]
-                print("instruction addressed "+mcode_Lines[i])
+                if verbose:
+                    print("instruction addressed "+mcode_Lines[i])
         i+=1
-    print(ins_Addressed)
+    if verbose:
+        print(ins_Addressed)
 
     return ins_Addressed
 
@@ -181,17 +209,21 @@ def label_Addressing(mcode_Lines):
     while i < len(mcode_Lines):
         match mcode_Lines[i]:
             case "comment":
-                print("comment ignored")
+                if verbose:
+                    print("comment ignored")
             case c if c.startswith(':'):
                 label=mcode_Lines[i].strip(':')
                 label_Names=label_Names+[label]
                 label_Addresses=label_Addresses+[str(addr)]
-                print("label addressed")
+                if verbose:
+                    print("label addressed")
             case _:
                 addr+=1
         i+=1
-    print(label_Names)
-    print(label_Addresses)
+    if verbose:
+        print(label_Names)
+    if verbose:
+        print(label_Addresses)
 
     return label_Names, label_Addresses
 
@@ -212,7 +244,8 @@ def logisim_Formatting(asm, output_Name):
     i=len(asm)
     while i<65536:
         mcodes=mcodes+['00']
-        print(len(mcodes))
+        if verbose:
+            print(len(mcodes))
         i+=1
 
     i=0
@@ -225,7 +258,6 @@ def logisim_Formatting(asm, output_Name):
             data_Line=data_Line+" "+str(mcodes[x])
             x+=1
 
-        #print(data_Line)
         logisim=logisim+[data_Line+"\n"]
         i+=16
 
@@ -238,6 +270,7 @@ def logisim_Formatting(asm, output_Name):
 input_File="input"
 output_File="output"
 output_Format=""
+verbose=False
 i=1
 while i<len(sys.argv):
     match sys.argv[i]:
@@ -245,8 +278,10 @@ while i<len(sys.argv):
             input_File=sys.argv[i].lstrip('i=')
         case c if c.startswith('o='):
             output_File=sys.argv[i].lstrip('o=')
-        case c if c.startswith('-'):
-            output_Format=sys.argv[i].lstrip('-')
+        case "-l":
+            output_Format="logisim"
+        case "-v":
+            verbose=True
         case _:
             print("Unknown Input")
     i+=1
@@ -255,11 +290,13 @@ asm_File=open(input_File, "r")
 asm_Lines=asm_File.readlines()
 print("OPENED "+input_File)
 print("FILE INPUT")
-print(asm_Lines)
+if verbose:
+    print(asm_Lines)
 
 asm_Lines_Strip=[ins.strip() for ins in asm_Lines]
 print("STRIPPED FILE")
-print(asm_Lines_Strip)
+if verbose:
+    print(asm_Lines_Strip)
 
 print("REPLACE MACROS WITH PLACEHOLDERS")
 asm_Expanded=ins_Macros_Pl(asm_Lines_Strip)
@@ -272,7 +309,8 @@ invalid_Check(mcode_Lines)
 
 print("LABEL ADDRESSING")
 labels=label_Addressing(mcode_Lines)
-print(labels)
+if verbose:
+    print(labels)
 
 print("REPLACE MACROS WITH ACTUAL")
 asm_Lines_Strip=[ins.strip() for ins in asm_Lines]
@@ -291,10 +329,10 @@ print("INSTRUCTION ADDRESSING")
 ins_Addressed=ins_Addressing(mcode_Decoded)
 
 match output_Format:
-    case "l":
+    case "logisim":
         print("Logisim Output")
         logisim_Formatting(ins_Addressed, output_File)
-    case "i":
+    case "intel":
         print("Intel Output")
     case _:
         print("No Output Format Selected")

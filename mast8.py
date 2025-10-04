@@ -1,5 +1,6 @@
 import sys
 from macros import macro_Names, macro_Format, macro_Pl
+from formats import output_Format
 
 def normal_Parse(ins_String):
     match ins_String[0].upper():
@@ -209,62 +210,33 @@ def invalid_Check(mcode_Lines):
         i+=1
     return
 
-def logisim_Formatting(asm, output_Name):
-    logisim=["v3.0 hex words addressed\n"]
-
-    mcodes=asm
-    i=len(asm)
-    while i<65536:
-        mcodes=mcodes+['00']
-        if verbose: print(len(mcodes))
-        i+=1
-
-    i=0
-    while i<65536:
-        address=format(i, '04x')
-
-        data_Line=address+":"
-        x=i
-        while x<i+16:
-            data_Line=data_Line+" "+str(mcodes[x])
-            x+=1
-
-        logisim=logisim+[data_Line+"\n"]
-        i+=16
-
-    output_File=open(output_Name, "w")
-    output_File.writelines(logisim)
-
-    print("Output to: "+output_Name)
-    return
-
-input_File=""
-output_File="output"
-output_Format=""
+input_File_Name=""
+output_File_Name="output"
+output_Type=""
 verbose=False
 i=1
 while i<len(sys.argv):
     match sys.argv[i]:
         case c if c.startswith('i='):
-            input_File=(sys.argv[i].strip('"'))[2:]
+            input_File_Name=(sys.argv[i].strip('"'))[2:]
         case c if c.startswith('o='):
-            output_File=(sys.argv[i].strip('"'))[2:]
+            output_File_name=(sys.argv[i].strip('"'))[2:]
         case "-l":
-            output_Format="logisim"
+            output_Type="logisim"
         case "-v":
             verbose=True
         case _:
             print("Unknown Input "+sys.argv[i])
     i+=1
 
-if input_File=="":
+if input_File_Name=="":
     print("No Input File")
     print("Exiting")
     sys.exit(0)
 
-asm_File=open(input_File, "r")
+asm_File=open(input_File_Name, "r")
 asm_Lines=asm_File.readlines()
-print("OPENED "+input_File)
+print("OPENED "+input_File_Name)
 print("FILE INPUT")
 if verbose: print(asm_Lines)
 
@@ -299,11 +271,7 @@ mcode_Decoded=ins_Decode(mcode_Macros)
 print("STRIP LABELS")
 mcode_Output=strip_Labels(mcode_Decoded)
 
-match output_Format:
-    case "logisim":
-        print("Logisim Output")
-        logisim_Formatting(mcode_Output, output_File)
-    case "intel":
-        print("Intel Output")
-    case _:
-        print("No Output Format Selected")
+output_String=output_Format(mcode_Output, output_Type, verbose)
+output_File=open(output_File_Name, "w")
+output_File.writelines(output_String)
+print("Output to: "+output_File_Name)

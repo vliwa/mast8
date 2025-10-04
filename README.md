@@ -19,8 +19,8 @@ Commas separate arguments
 ## Macros
 Space separates opcode and arguments  
 Commas separate arguments  
-|Type|Arg1|Arg2|Arg3|Info|
-|--|:--:|:--:|:--:|--|
-|JMP|LBL/EQU/imm|  |  |imm binary(0b), hex(0x) or decimal(no prefix)|
-|ADD|dst|src1|src2|  |
-|AND|dst|src1|src2|  |
+|Type|Arg1|Arg2|Arg3|Registers|Info|
+|--|:--:|:--:|:--:|:--:|--|
+|JMP|LBL/EQU/imm|  |  |0,1|imm binary(0b), hex(0x) or decimal(no prefix)|
+|ADD|dst|src1|src2|  |0,a,b|
+|AND|dst|src1|src2|  |0,a,b|

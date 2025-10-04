@@ -1,7 +1,8 @@
 import sys
 macro_Names=[]
 
-#JMP LBL/immediate(0b/0x)
+#JMP LBL/EQU/immediate(0b/0x/decimal)
+#overwrites register 0/1
 #mvi 0,lbln0
 #mvi 1,lbln1
 #mvi 2,lbln2
@@ -54,6 +55,7 @@ def macro_Jmp(macro, labels, equates):
     return [mv_0]+[mv_1]+[mv_2]+[mv_3]+["MV 0,6"]
 
 #ADD x,a,b
+#overwrites registers 0/a/b
 #alu:01000001
 #mv 3,a
 #mv 4,b
@@ -83,9 +85,10 @@ def macro_Add(macro):
     return [mv_A]+[mv_B]+["MVI 0,0b0001", "MVI 1,0b0100", "MV 5,6"]+[mv_X]
 
 #AND x,a,b
+#overwrites register 0/a/b
 #alu:01011011
-#mv 3,6
-#mv 4,7
+#mv 3,a
+#mv 4,b
 #mvi 0,1011
 #mvi 1,0001
 #mv 5,6

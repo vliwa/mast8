@@ -20,7 +20,7 @@ MVI immediate argument can be
 |--|:--:|--|
 |binary|0b|  |
 |hex|0x|  |
-|decimal|  |  |
+|decimal|  |no prefix|
 
 ## Macros
 Space separates opcode and arguments

@@ -53,12 +53,28 @@ def imm_Parse(ins_String):
 def label_Parse(label_String):
     return label_String[0]
 
-def strip_Comments(asm):
+def equates_Lists(asm):
+    print(asm)
+    equate_Names=[]
+    equate_Values=[]
+    i=0
+    while i < len(asm):
+        if asm[i].startswith('.'):
+            equate_Split=asm[i].split()
+            equate_Names=equate_Names+[equate_Split[1]]
+            equate_Values=equate_Values+[equate_Split[2]]
+        i+=1
+
+    return equate_Names, equate_Values
+
+def strip_Constants(asm):
     mcode_Lines=[]
     i=0
     while i < len(asm):
         if asm[i].startswith('#'):
-            if verbose: print("comment")
+            if verbose: print("comment removed")
+        elif asm[i].startswith('.'):
+            if verbose: print("equate removed")
         else:
             mcode_Lines=mcode_Lines+[asm[i]]
         i+=1
@@ -78,13 +94,13 @@ def ins_Macros_Pl(asm):
 
     return mcode_Lines
 
-def ins_Macros(asm, labels):
+def ins_Macros(asm, labels, equates):
     mcode_Lines=asm
     i=0
     while i < len(asm):
         opcode_Split=asm[i].split()
         if opcode_Split[0].upper() in macro_Names:
-            macro_Expand=macro_Format(asm[i], labels)
+            macro_Expand=macro_Format(asm[i], labels, equates)
             mcode_Lines[i:i+1]=macro_Expand
         i+=1
     if verbose: print(mcode_Lines)
@@ -114,6 +130,9 @@ def ins_Sort(asm):
                 return ins_List
             case c if c.startswith(':'):
                 if verbose: print("label")
+                return ins_List
+            case c if c.startswith('.'):
+                if verbose: print("equate")
                 return ins_List
             case c if c.startswith('#'):
                 if verbose: print("comment")
@@ -250,8 +269,12 @@ mcode_Lines=ins_Sort(asm_Lines_Strip)
 print("INVALID INSTRUCTION CHECK")
 invalid_Check(mcode_Lines)
 
-print("STRIP COMMENTS")
-mcode_Ins=strip_Comments(mcode_Lines)
+print("BUILD EQUATES LISTS")
+equates=equates_Lists(mcode_Lines)
+if verbose: print(equates)
+
+print("STRIP COMMENTS AND EQUATES")
+mcode_Ins=strip_Constants(mcode_Lines)
 mcode_Pass2=mcode_Ins[:]
 if verbose: print(mcode_Ins)
 
@@ -263,7 +286,7 @@ labels=label_Addressing(mcode_Expanded)
 if verbose: print(labels)
 
 print("REPLACE MACROS WITH ACTUAL")
-mcode_Macros=ins_Macros(mcode_Pass2, labels)
+mcode_Macros=ins_Macros(mcode_Pass2, labels, equates)
 
 print("INSTRUCTION DECODING")
 mcode_Decoded=ins_Decode(mcode_Macros)

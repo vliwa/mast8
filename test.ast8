@@ -1,4 +1,5 @@
 #test add 2+1->adrp
+.equ ten 10
 :ADD
     mvi 0,2
     MVI 1,0

@@ -4,7 +4,8 @@ TTA8 Macro Assembler
 |Type|Prefix|Info|
 |--|:--:|--|
 |Comment|#|Can be on own line or post instruction with space|
-|Label|:|Must be on own line
+|Label|:|Must be on own line|
+|Equate|.|Must be on own line|
 ## Instructions
 Space separates opcode and arguments
 Commas separate arguments

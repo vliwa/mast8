@@ -24,27 +24,32 @@ def macro_Jmp_Pl(macro):
 
     return placeholder_List
 
-def macro_Jmp(macro, labels):
+def macro_Jmp(macro, labels, equates):
     label_Names=labels[0]
     label_Addresses=labels[1]
+    equate_Names=equates[0]
+    equate_Values=equates[1]
 
-    if macro.startswith('0b'):
-        address_Decimal=int(macro[2:], 2)
-        address_Binary=format(int(address_Decimal), '016b')
-    elif macro.startswith('0x'):
-        address_Decimal=int(macro[2:], 16)
-        address_Binary=format(int(address_Decimal), '016b')
-    elif macro.isdecimal():
-        address_Decimal=int(macro, 10)
-        address_Binary=format(int(address_Decimal), '016b')
-    else:
-        if macro not in label_Names:
-            print("Unknown Label "+macro)
+    match macro:
+        case c if c.startswith('0b'):
+            address_Decimal=int(macro[2:], 2)
+            address_Binary=format(int(address_Decimal), '016b')
+        case c if c.startswith('0x'):
+            address_Decimal=int(macro[2:], 16)
+            address_Binary=format(int(address_Decimal), '016b')
+        case c if c.isdecimal():
+            address_Decimal=int(macro, 10)
+            address_Binary=format(int(address_Decimal), '016b')
+        case c if c in equate_Names:
+            address=equate_Names.index(macro)
+            address_Binary=format(int(equate_Values[address]), '016b')
+        case c if c in label_Names:
+            address=label_Names.index(macro)
+            address_Binary=format(int(label_Addresses[address]), '016b')
+        case _:
+            print("Unknown Label or Equate "+macro)
             print("Exiting")
             sys.exit(0)
-
-        address=label_Names.index(macro)
-        address_Binary=format(int(label_Addresses[address]), '016b')
 
     mv_0=f"MVI 0,0b{address_Binary[12:16]}"
     mv_1=f"MVI 1,0b{address_Binary[8:12]}"
@@ -129,11 +134,11 @@ def macro_Pl(macro):
         case "AND":
             return macro_And_Pl(opcode_Split[0])
 
-def macro_Format(macro, labels):
+def macro_Format(macro, labels, equates):
     opcode_Split=macro.split()
     match opcode_Split[0].upper():
         case "JMP":
-            return macro_Jmp(opcode_Split[1], labels)
+            return macro_Jmp(opcode_Split[1], labels, equates)
         case "ADD":
             return macro_Add(opcode_Split[1])
         case "AND":

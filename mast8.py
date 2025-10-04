@@ -272,6 +272,7 @@ print("STRIP LABELS")
 mcode_Output=strip_Labels(mcode_Decoded)
 
 output_String=output_Format(mcode_Output, output_Type, verbose)
-output_File=open(output_File_Name, "w")
-output_File.writelines(output_String)
-print("Output to: "+output_File_Name)
+if output_String!=["no output"]:
+    output_File=open(output_File_Name, "w")
+    output_File.writelines(output_String)
+    print("Output to: "+output_File_Name)

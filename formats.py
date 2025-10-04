@@ -24,6 +24,7 @@ def logisim_Formatting(asm, output_Name, verbose):
     return logisim
 
 def output_Format(mcode, output_Type, verbose):
+    output_List=["no output"]
     match output_Type:
         case "logisim":
             print("Logisim Output")

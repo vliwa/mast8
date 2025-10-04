@@ -7,8 +7,8 @@ TTA8 Macro Assembler
 |Label|:|Must be on own line|
 |Equate|.|Must be on own line|
 ## Instructions
-Space separates opcode and arguments
-Commas separate arguments
+Space separates opcode and arguments  
+Commas separate arguments  
 |Type|Arg1|Arg2|Info|
 |--|:--:|:--:|--|
 |MV|dst|src|  |
@@ -17,8 +17,8 @@ Commas separate arguments
 |MVI|nibble|imm|imm binary(0b), hex(0x) or decimal(no prefix)|
 
 ## Macros
-Space separates opcode and arguments
-Commas separate arguments
+Space separates opcode and arguments  
+Commas separate arguments  
 |Type|Arg1|Arg2|Arg3|Info|
 |--|:--:|:--:|:--:|--|
 |JMP|LBL/EQU/imm|  |  |imm binary(0b), hex(0x) or decimal(no prefix)|

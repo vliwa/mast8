@@ -14,13 +14,13 @@ Commas separate arguments
 |MV|dst|src|  |
 |MVC|dst|src|  |
 |MVZ|dst|src|  |
-|MVI|nibble|immediate|imm binary(0b), hex(0x) or decimal(no prefix)|
+|MVI|nibble|imm|imm binary(0b), hex(0x) or decimal(no prefix)|
 
 ## Macros
 Space separates opcode and arguments
 Commas separate arguments
 |Type|Arg1|Arg2|Arg3|Info|
 |--|:--:|:--:|:--:|--|
-|JMP|LBL/immediate|  |  |imm binary(0b), hex(0x) or decimal(no prefix)|
+|JMP|LBL/EQU/imm|  |  |imm binary(0b), hex(0x) or decimal(no prefix)|
 |ADD|dst|src1|src2|  |
 |AND|dst|src1|src2|  |

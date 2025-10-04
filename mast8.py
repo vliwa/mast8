@@ -36,11 +36,11 @@ def imm_Parse(ins_String):
 
     match nibble_Split[1]:
         case c if c.startswith('0b'):
-            data_decimal=int(nibble_Split[1][2:], 2)
-            data=format(data_decimal, '04b')
+            data_Decimal=int(nibble_Split[1][2:], 2)
+            data=format(data_Decimal, '04b')
         case c if c.startswith('0x'):
-            data_decimal=int(nibble_Split[1][2:], 16)
-            data=format(data_decimal, '04b')
+            data_Decimal=int(nibble_Split[1][2:], 16)
+            data=format(data_Decimal, '04b')
         case _:
             data=format(int(nibble_Split[1]), '04b')
 

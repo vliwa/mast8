@@ -8,25 +8,25 @@ TTA8 Macro Assembler
 ## Instructions
 Space separates opcode and arguments
 Commas separate arguments
-|Type|Arg1|Arg2|
-|--|:--:|:--:|
-|MV|dst|src|
-|MVC|dst|src|
-|MVZ|dst|src|
-|MVI|nibble|immediate|
+|Type|Arg1|Arg2|Info|
+|--|:--:|:--:|--|
+|MV|dst|src|  |
+|MVC|dst|src|  |
+|MVZ|dst|src|  |
+|MVI|nibble|immediate|  |
 
 MVI immediate argument can be
-|Type|Prefix|
-|--|:--:|
-|binary|0b|
-|hex|0x|
-|decimal|  |
+|Type|Prefix|Info|
+|--|:--:|--|
+|binary|0b|  |
+|hex|0x|  |
+|decimal|  |  |
 
 ## Macros
 Space separates opcode and arguments
 Commas separate arguments
-|Type|Arg1|Arg2|Arg3|
-|--|:--:|:--:|:--:|
-|JMP|LBL|    |    |
-|ADD|dst|src1|src2|
-|AND|dst|src1|src2|
+|Type|Arg1|Arg2|Arg3|Info|
+|--|:--:|:--:|:--:|--|
+|JMP|LBL/immediate|  |  |imm 0b or 0x|
+|ADD|dst|src1|src2|  |
+|AND|dst|src1|src2|  |

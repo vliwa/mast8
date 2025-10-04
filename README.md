@@ -27,6 +27,6 @@ Space separates opcode and arguments
 Commas separate arguments
 |Type|Arg1|Arg2|Arg3|Info|
 |--|:--:|:--:|:--:|--|
-|JMP|LBL/immediate|  |  |imm 0b or 0x|
+|JMP|LBL/immediate|  |  |imm 0b, 0x or decimal(no prefix)|
 |ADD|dst|src1|src2|  |
 |AND|dst|src1|src2|  |

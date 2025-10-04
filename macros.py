@@ -34,6 +34,9 @@ def macro_Jmp(macro, labels):
     elif macro.startswith('0x'):
         address_Decimal=int(macro[2:], 16)
         address_Binary=format(int(address_Decimal), '016b')
+    elif macro.isdecimal():
+        address_Decimal=int(macro, 10)
+        address_Binary=format(int(address_Decimal), '016b')
     else:
         if macro not in label_Names:
             print("Unknown Label "+macro)

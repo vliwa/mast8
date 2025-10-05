@@ -62,7 +62,18 @@ def equates_Lists(asm):
         if asm[i].startswith('.'):
             equate_Split=asm[i].split()
             equate_Names=equate_Names+[equate_Split[1]]
-            equate_Values=equate_Values+[equate_Split[2]]
+            match equate_Split[2]:
+                case c if c.startswith('0b'):
+                    equate_Value=int(equate_Split[2][2:], 2)
+                case c if c.startswith('0x'):
+                    equate_Value=int(equate_Splite[2][2:], 16)
+                case c if c.isdecimal():
+                    equate_Value=int(equate_Split[2], 10)
+                case _:
+                    print("Unknown Equate Value "+equate_Split[2])
+                    print("Exiting")
+                    sys.exit(0)
+            equate_Values=equate_Values+[equate_Value]
         i+=1
 
     return equate_Names, equate_Values

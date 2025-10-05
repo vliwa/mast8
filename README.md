@@ -5,7 +5,7 @@ TTA8 Macro Assembler
 |--|:--:|--|
 |Comment|#|Can be on own line or post instruction with space|
 |Label|:|Must be on own line|
-|Equate|.|Must be on own line|
+|Equate|.|Must be on own line, binary(0b), hex(0x) or decimal(no prefix)|
 ## Instructions
 Space separates opcode and arguments  
 Commas separate arguments  

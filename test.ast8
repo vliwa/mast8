@@ -2,6 +2,8 @@
 .equ ten 10
 :ADD
     mvi 0,2
+    mvi 0,2
+    mvi 0,2
     MVI 1,0
     MVI 2,1
     MVI 3,0

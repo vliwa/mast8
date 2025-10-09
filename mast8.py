@@ -253,6 +253,8 @@ while i<len(sys.argv):
             output_File_name=(sys.argv[i].strip('"'))[2:]
         case "-l":
             output_Type="logisim"
+        case "-i":
+            output_Type="intel"
         case "-v":
             verbose=True
         case _:

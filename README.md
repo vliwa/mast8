@@ -1,5 +1,13 @@
 # mast8
 TTA8 Macro Assembler
+## Arguments
+|Arg|Info|
+|--|--|
+|i=|input file name|
+|o=|output file name|
+|-l|logisim output format|
+|-i|intel hex output format|
+|-v|verbose console output|
 ## Non Instructions
 |Type|Prefix|Info|
 |--|:--:|--|
